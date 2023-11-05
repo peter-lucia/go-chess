@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 )
 
 type Cell int
@@ -43,7 +44,7 @@ type Piece struct {
 	cellType    Cell
 }
 
-func (b Board) isEmpty(row int, col int) (bool, error) {
+func (b Board) moveIsWithinBoardBounds(row int, col int) (bool, error) {
 	n := len(b.state)
 	m := len(b.state[0])
 	if row >= n || row < 0 {
@@ -56,26 +57,75 @@ func (b Board) isEmpty(row int, col int) (bool, error) {
 	return b.state[row][col] == Empty, nil
 }
 
-func (p *Piece) move(direction Direction, board *Board) bool {
+func (b Board) moveIsValidForPiece(movingPieceType Cell, rowDy int, colDx int) (bool, error) {
 
-	switch direction {
-	case Up:
-		newRow := p.row + p.moveUpDy
-		newCol := p.col + p.moveUpDy
-		validMove, err := board.isEmpty(newRow, newCol)
-		if err != nil {
-			fmt.Println(err)
-			return false
+	switch movingPieceType {
+	case Queen:
+		if math.Abs(float64(rowDy)) == math.Abs(float64(colDx)) { // diagonal
+			return true, nil
+		} else if rowDy == 0 || colDx == 0 { // up / down / left / right
+			return true, nil
+		} else {
+			return false, nil
 		}
+	case King:
+		if rowDy == 1 && colDx == 0 || rowDy == 0 && colDx == 1 {
+			return true, nil
+		} else {
+			return false, nil
+		}
+	case Bishop:
+		if math.Abs(float64(rowDy)) == math.Abs(float64(colDx)) { // diagonal
+			return true, nil
+		}
+	case Horse:
+		if math.Abs(float64(rowDy)) == 2 && math.Abs(float64(colDx)) == 1 {
+			return true, nil
+		} else if math.Abs(float64(rowDy)) == 1 && math.Abs(float64(colDx)) == 2 {
+			return true, nil
 
-		if validMove {
-			board.state[p.row][p.col] = Empty
-			p.row = newRow
-			p.col = newCol
-			board.state[p.row][p.col] = p.cellType
 		}
 
 	}
+
+	return false, nil
+
+}
+
+func (b Board) moveReachesEmptyCellOrOpponent(movingPieceType Cell, rowDy int, colDx int) (bool, error) {
+	// TODO: Implement this
+	return false, nil
+}
+
+func (b Board) moveDoesNotCauseImplicitSelfCheck(movingPieceType Cell, rowDy int, colDx int) (bool, error) {
+	// TODO: Implement this
+	return false, nil
+}
+
+func (p *Piece) move(rowDy int, colDx int, board *Board) bool {
+
+	newRow := p.row + rowDy
+	newCol := p.col + colDx
+	moveWithinBounds, err := board.moveIsWithinBoardBounds(newRow, newCol)
+	moveValidForPiece, err := board.moveIsValidForPiece(p.cellType, rowDy, colDx)
+	moveDestinationOK, err := board.moveReachesEmptyCellOrOpponent(p.cellType, rowDy, colDx)
+	moveDoesNotCauseCheck, err := board.moveDoesNotCauseImplicitSelfCheck(p.cellType, rowDy, colDx)
+
+	// * check that the move doesn't result in check for your king
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	validMove := moveWithinBounds && moveValidForPiece && moveDestinationOK && moveDoesNotCauseCheck
+
+	if validMove {
+		board.state[p.row][p.col] = Empty
+		p.row = newRow
+		p.col = newCol
+		board.state[p.row][p.col] = p.cellType
+	}
+
 	return true
 }
 
