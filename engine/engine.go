@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"fmt"
@@ -37,7 +37,7 @@ const (
 )
 
 type Board struct {
-	state [8][8]Piece
+	State [8][8]Piece
 }
 
 type Piece struct {
@@ -51,7 +51,7 @@ type Piece struct {
 	moveDownDy  int
 	moveRightDx int
 	moveRightDy int
-	cellType    Cell
+	CellType    Cell
 }
 
 func (p Piece) hasKingInCheck(b Board) (bool, error) {
@@ -61,12 +61,12 @@ func (p Piece) hasKingInCheck(b Board) (bool, error) {
 }
 
 func (p Piece) isPlayer1() (bool, error) {
-	return p.cellType > Empty && p.cellType <= P1Pawn, nil
+	return p.CellType > Empty && p.CellType <= P1Pawn, nil
 }
 
 func (b Board) moveIsWithinBoardBounds(row int, col int) (bool, error) {
-	n := len(b.state)
-	m := len(b.state[0])
+	n := len(b.State)
+	m := len(b.State[0])
 	if row >= n || row < 0 {
 		return false, fmt.Errorf("row out of position %d", row)
 
@@ -74,7 +74,7 @@ func (b Board) moveIsWithinBoardBounds(row int, col int) (bool, error) {
 		return false, fmt.Errorf("col out of position %d", col)
 	}
 
-	return b.state[row][col].cellType == Empty, nil
+	return b.State[row][col].CellType == Empty, nil
 }
 
 func (b Board) moveIsValidForPiece(movingPieceType Cell, rowDy int, colDx int) (bool, error) {
@@ -112,8 +112,8 @@ func (b Board) moveIsValidForPiece(movingPieceType Cell, rowDy int, colDx int) (
 }
 
 func (b Board) moveReachesEmptyCellOrOpponent(p *Piece, rowDy int, colDx int) (bool, error) {
-	rows := len(b.state)
-	cols := len(b.state[0])
+	rows := len(b.State)
+	cols := len(b.State[0])
 	newRow := p.row + rowDy
 	newCol := p.col + colDx
 
@@ -125,18 +125,18 @@ func (b Board) moveReachesEmptyCellOrOpponent(p *Piece, rowDy int, colDx int) (b
 		return false, nil
 	}
 
-	if p.cellType == Empty {
+	if p.CellType == Empty {
 		return false, fmt.Errorf("a piece cannot have an empty cell type")
 	}
 
-	destinationCell := b.state[newRow][newCol].cellType
+	destinationCell := b.State[newRow][newCol].CellType
 	// player 1 trying to move to existing p1 occupied cell
-	if p.cellType <= P1Pawn && destinationCell > Empty && destinationCell <= P1Pawn {
+	if p.CellType <= P1Pawn && destinationCell > Empty && destinationCell <= P1Pawn {
 		return false, nil
 	}
 
 	// player 2 trying to move to existing p2 occupied cell
-	if p.cellType > P1Pawn && destinationCell > P1Pawn {
+	if p.CellType > P1Pawn && destinationCell > P1Pawn {
 		return false, nil
 	}
 
@@ -145,9 +145,9 @@ func (b Board) moveReachesEmptyCellOrOpponent(p *Piece, rowDy int, colDx int) (b
 
 func (b Board) getCoordsForCellType(cellType Cell) ([2]int, error) {
 
-	for rowNum, row := range b.state {
+	for rowNum, row := range b.State {
 		for colNum, p := range row {
-			if p.cellType == cellType {
+			if p.CellType == cellType {
 				return [2]int{rowNum, colNum}, nil
 			}
 		}
@@ -158,8 +158,8 @@ func (b Board) getCoordsForCellType(cellType Cell) ([2]int, error) {
 func (b Board) isEitherKingInCheck() (bool, bool, error) {
 	p1KingInCheck := false
 	p2KingInCheck := false
-	for row, _ := range b.state {
-		for _, p := range b.state[row] {
+	for row, _ := range b.State {
+		for _, p := range b.State[row] {
 			isP1, _ := p.isPlayer1()
 			hasKingInCheck, _ := p.hasKingInCheck(b)
 			if isP1 && hasKingInCheck {
@@ -175,14 +175,21 @@ func (b Board) isEitherKingInCheck() (bool, bool, error) {
 }
 
 func (b Board) moveDoesNotPutPlayersKingInCheck(p Piece, rowDy int, colDx int) (bool, error) {
+	/*
+		Returns true if the move would put the moving player's king in check, false otherwise
+	*/
 
 	isP1, _ := p.isPlayer1()
 	tempB := b
-	tempB.state[p.row][p.col] = Piece{cellType: Empty}
-	tempB.state[p.row+rowDy][p.col+colDx] = p
-	p1InCheck, _, _ := tempB.isEitherKingInCheck()
+	tempB.State[p.row][p.col] = Piece{CellType: Empty}
+	tempB.State[p.row+rowDy][p.col+colDx] = p
+	p1InCheck, p2InCheck, _ := tempB.isEitherKingInCheck()
 
 	if p1InCheck && isP1 {
+		return true, nil
+	}
+
+	if p2InCheck && !isP1 {
 		return true, nil
 	}
 
@@ -201,7 +208,7 @@ func (p *Piece) move(rowDy int, colDx int, board *Board) bool {
 	newRow := p.row + rowDy
 	newCol := p.col + colDx
 	moveWithinBounds, err := board.moveIsWithinBoardBounds(newRow, newCol)
-	moveValidForPiece, err := board.moveIsValidForPiece(p.cellType, rowDy, colDx)
+	moveValidForPiece, err := board.moveIsValidForPiece(p.CellType, rowDy, colDx)
 	moveDestinationOK, err := board.moveReachesEmptyCellOrOpponent(p, rowDy, colDx)
 	moveDoesNotCauseCheck, err := board.moveDoesNotPutPlayersKingInCheck(*p, rowDy, colDx)
 
@@ -214,52 +221,11 @@ func (p *Piece) move(rowDy int, colDx int, board *Board) bool {
 	validMove := moveWithinBounds && moveValidForPiece && moveDestinationOK && moveDoesNotCauseCheck
 
 	if validMove {
-		board.state[p.row][p.col] = Piece{cellType: Empty}
+		board.State[p.row][p.col] = Piece{CellType: Empty}
 		p.row = newRow
 		p.col = newCol
-		board.state[p.row][p.col] = *p
+		board.State[p.row][p.col] = *p
 	}
 
 	return true
-}
-
-func main() {
-	fmt.Println("Let's play chess!")
-
-	board := Board{}
-
-	board.state[0][0] = Piece{cellType: P1Rook}
-	board.state[0][1] = Piece{cellType: P1Horse}
-	board.state[0][2] = Piece{cellType: P1Bishop}
-	board.state[0][3] = Piece{cellType: P1Queen}
-	board.state[0][4] = Piece{cellType: P1King}
-	board.state[0][5] = Piece{cellType: P1Bishop}
-	board.state[0][6] = Piece{cellType: P1Horse}
-	board.state[0][7] = Piece{cellType: P1Rook}
-
-	board.state[7][0] = Piece{cellType: P1Rook}
-	board.state[7][1] = Piece{cellType: P1Horse}
-	board.state[7][2] = Piece{cellType: P1Bishop}
-	board.state[7][4] = Piece{cellType: P1King}
-	board.state[7][3] = Piece{cellType: P1Queen}
-	board.state[7][5] = Piece{cellType: P1Bishop}
-	board.state[7][6] = Piece{cellType: P1Horse}
-	board.state[7][7] = Piece{cellType: P1Rook}
-
-	for row := range board.state {
-		if row == 1 || row == 6 {
-			for col := range board.state[row] {
-				board.state[row][col] = Piece{cellType: P1Pawn}
-			}
-		}
-	}
-
-	for _, row := range board.state {
-		for _, col := range row {
-			fmt.Printf("%d ", col.cellType)
-		}
-		fmt.Println()
-
-	}
-
 }
