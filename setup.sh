@@ -14,5 +14,6 @@ mkdir -p runner
 cd runner/
 go mod init github.com/peter-lucia/go-chess/runner
 go get ../engine
+go mod tidy
 
 cd ../
