@@ -10,15 +10,15 @@ type Cell int
 const (
 	Empty Cell = iota
 
-	P1Queen
 	P1King
+	P1Queen
 	P1Bishop
 	P1Horse
 	P1Rook
 	P1Pawn
 
-	P2Queen
 	P2King
+	P2Queen
 	P2Bishop
 	P2Horse
 	P2Rook
@@ -55,7 +55,7 @@ type Piece struct {
 }
 
 func (p Piece) hasKingInCheck(b Board) (bool, error) {
-	// Go through all of the piece's moves and check if any one of them is valid
+	// Go through all the piece's moves and check if any one of them is valid
 	// and could kill the opposing player's king
 	return false, nil
 }
@@ -77,7 +77,9 @@ func (b Board) moveIsWithinBoardBounds(row int, col int) (bool, error) {
 	return b.State[row][col].CellType == Empty, nil
 }
 
-func (b Board) moveIsValidForPieceType(movingPieceType Cell, rowDy int, colDx int) (bool, error) {
+func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) {
+
+	movingPieceType := p.CellType
 
 	switch movingPieceType {
 	case P1Queen, P2Queen:
@@ -104,6 +106,14 @@ func (b Board) moveIsValidForPieceType(movingPieceType Cell, rowDy int, colDx in
 		} else if math.Abs(float64(rowDy)) == 1 && math.Abs(float64(colDx)) == 2 {
 			return true, nil
 
+		}
+	case P1Pawn:
+		if rowDy == 1 || (rowDy == 2 && p.row == 1) {
+			return true, nil
+		}
+	case P2Pawn:
+		if rowDy == -1 || (rowDy == -2 && p.row == 6) {
+			return true, nil
 		}
 	}
 
@@ -208,7 +218,7 @@ func (p *Piece) validMove(rowDy int, colDx int, board *Board) (bool, error) {
 	newRow := p.row + rowDy
 	newCol := p.col + colDx
 	moveWithinBounds, _ := board.moveIsWithinBoardBounds(newRow, newCol)
-	moveValidForPiece, _ := board.moveIsValidForPieceType(p.CellType, rowDy, colDx)
+	moveValidForPiece, _ := board.moveIsValidForPiece(*p, rowDy, colDx)
 	moveDestinationOK, _ := board.moveReachesEmptyCellOrOpponent(p, rowDy, colDx)
 	moveDoesNotCauseCheck, _ := board.moveDoesNotPutPieceKingInCheck(*p, rowDy, colDx)
 	return moveWithinBounds && moveValidForPiece && moveDestinationOK && moveDoesNotCauseCheck, nil
@@ -246,19 +256,21 @@ func InitGame() (Board, error) {
 	board.State[0][6] = Piece{CellType: P1Horse}
 	board.State[0][7] = Piece{CellType: P1Rook}
 
-	board.State[7][0] = Piece{CellType: P1Rook}
-	board.State[7][1] = Piece{CellType: P1Horse}
-	board.State[7][2] = Piece{CellType: P1Bishop}
-	board.State[7][4] = Piece{CellType: P1King}
-	board.State[7][3] = Piece{CellType: P1Queen}
-	board.State[7][5] = Piece{CellType: P1Bishop}
-	board.State[7][6] = Piece{CellType: P1Horse}
-	board.State[7][7] = Piece{CellType: P1Rook}
+	board.State[7][0] = Piece{CellType: P2Rook}
+	board.State[7][1] = Piece{CellType: P2Horse}
+	board.State[7][2] = Piece{CellType: P2Bishop}
+	board.State[7][4] = Piece{CellType: P2King}
+	board.State[7][3] = Piece{CellType: P2Queen}
+	board.State[7][5] = Piece{CellType: P2Bishop}
+	board.State[7][6] = Piece{CellType: P2Horse}
+	board.State[7][7] = Piece{CellType: P2Rook}
 
 	for row := range board.State {
-		if row == 1 || row == 6 {
-			for col := range board.State[row] {
+		for col := range board.State[row] {
+			if row == 1 {
 				board.State[row][col] = Piece{CellType: P1Pawn}
+			} else if row == 6 {
+				board.State[row][col] = Piece{CellType: P2Pawn}
 			}
 		}
 	}
