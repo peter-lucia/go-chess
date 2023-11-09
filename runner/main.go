@@ -10,6 +10,7 @@ func main() {
 
 	board, _ := engine.InitGame()
 
+	fmt.Println("        Player 1")
 	for _, row := range board.State {
 		for _, col := range row {
 			fmt.Printf("%02d ", col.CellType) // %02d will pad 0's to make the width 2
@@ -17,5 +18,6 @@ func main() {
 		fmt.Println()
 
 	}
+	fmt.Println("        Player 2")
 
 }

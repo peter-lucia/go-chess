@@ -243,6 +243,22 @@ func (p *Piece) move(rowDy int, colDx int, board *Board) (bool, error) {
 	return true, nil
 }
 
+func (b *Board) convertPawns(convertToCellType Cell) (bool, error) {
+	for col := range b.State[0] {
+		if b.State[0][col].CellType == P2Pawn {
+			b.State[0][col].CellType = convertToCellType
+		}
+	}
+
+	for col := range b.State[7] {
+		if b.State[7][col].CellType == P1Pawn {
+			b.State[7][col].CellType = convertToCellType
+		}
+	}
+	return true, nil
+
+}
+
 func InitGame() (Board, error) {
 
 	board := Board{}
