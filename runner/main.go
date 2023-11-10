@@ -3,7 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/peter-lucia/go-chess/engine"
+	"github.com/peter-lucia/go-chess/ui"
 )
+
+//func handleMove(some parameters) {
+//	// Handle chess move logic here
+//}
 
 func main() {
 	fmt.Println("Let's play chess!")
@@ -19,5 +24,6 @@ func main() {
 
 	}
 	fmt.Println("        Player 2")
+	ui.StartUI()
 
 }
