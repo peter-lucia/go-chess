@@ -14,7 +14,10 @@ func StartUI() {
 	e.Use(middleware.Recover())
 
 	// Serve static files
-	e.Static("/", "")
+	e.Static("/css", "ui/css/")
+	e.Static("/js", "ui/js/")
+	e.Static("/img", "ui/img/")
+	e.File("/", "ui/index.html")
 
 	// Start the server
 	e.Logger.Fatal(e.Start(":8080"))
