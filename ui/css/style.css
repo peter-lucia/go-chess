@@ -1,0 +1,17 @@
+#board1 {
+    width: 600px;
+    position: absolute;
+    left: 30%;
+    top: 10%;
+}
+
+#clearBtn {
+    position: absolute;
+    left: 37%;
+}
+
+#startBtn {
+    position: absolute;
+    left: 30%;
+
+}
