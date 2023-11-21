@@ -6,9 +6,13 @@ import (
 	"github.com/peter-lucia/go-chess/ui"
 )
 
-//func handleMove(some parameters) {
-//	// Handle chess move logic here
-//}
+func handleMove(piece string, start string, end string) (bool, error) {
+	// Handle chess move logic here
+	fmt.Println("Piece", piece, "start", start, "end", end)
+	// TODO: Return the entire board after the move request
+	// with a move detail
+	return true, nil
+}
 
 func main() {
 	fmt.Println("Let's play chess!")
@@ -24,6 +28,6 @@ func main() {
 
 	}
 	fmt.Println("        Player 2")
-	ui.StartUI()
+	ui.StartUI(handleMove)
 
 }
