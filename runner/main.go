@@ -6,9 +6,9 @@ import (
 	"github.com/peter-lucia/go-chess/ui"
 )
 
-func handleMove(piece string, start string, end string) (bool, error) {
+func handleMove(mr ui.MoveRequest) (bool, error) {
 	// Handle chess move logic here
-	fmt.Println("Piece", piece, "start", start, "end", end)
+	fmt.Println("Piece", mr.Piece, "start", mr.Start, "end", mr.End)
 	// TODO: Return the entire board after the move request
 	// with a move detail
 	return true, nil

@@ -7,39 +7,40 @@ import (
 	"strconv"
 )
 
-type MoveCallback func(
-	piece string,
-	start string,
-	end string) (bool, error)
+type MoveCallback func(MoveRequest) (bool, error)
 
 type MoveResponse struct {
-	Piece   string `json:"piece"   xml:"piece"`
-	Start   string `json:"start"   xml:"start"`
-	End     string `json:"end"     xml:"end"`
+	Request MoveRequest
 	Success string `json:"success" xml:"success"`
 }
 
-func handleMove(c echo.Context, cb MoveCallback) error {
-	// in echo FormValue are json body parameters
-	piece := c.FormValue("piece")
-	start := c.FormValue("start")
-	end := c.FormValue("end")
+type MoveRequest struct {
+	Piece string `json:"piece"   xml:"piece"`
+	Start string `json:"start"   xml:"start"`
+	End   string `json:"end"     xml:"end"`
+}
 
-	success, err := cb(piece, start, end)
+func handleMove(c echo.Context, cb MoveCallback) error {
+
+	// extract the json body parameters by binding to a move request struct
+	var mr MoveRequest
+	err := c.Bind(&mr)
+
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	success, err := cb(mr)
 
 	if err != nil {
 		moveResponse := &MoveResponse{
-			Piece:   piece,
-			Start:   start,
-			End:     end,
+			Request: mr,
 			Success: strconv.FormatBool(false),
 		}
 		return c.JSON(http.StatusInternalServerError, moveResponse)
 	}
 	moveResponse := &MoveResponse{
-		Piece:   piece,
-		Start:   start,
-		End:     end,
+		Request: mr,
 		Success: strconv.FormatBool(success),
 	}
 	if success {
