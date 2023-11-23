@@ -1,24 +1,36 @@
-function onChange(oldPos, newPos) {
+function onDrop(oldPos, newPos) {
     console.log('Position changed:')
-    console.log('Old position: ' + Chessboard.objToFen(oldPos))
-    console.log('New position: ' + Chessboard.objToFen(newPos))
+    console.log('Old position: ' + JSON.stringify(oldPos))
+    console.log('New position: ' + JSON.stringify(newPos))
     console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
     // use go API to check validity of the move
     // if it's valid, accept the move, otherwise, snapback
+    console.log(board.position())
     fetch("/move", {
         method: "POST",
         body: JSON.stringify({
-            piece: "P1K1",
-            start: "a1",
-            end: "a2",
+            start: oldPos,
+            end: newPos,
+            board: board.position()
         }),
         headers: {
             "Content-Type": "application/json"
         }
-    })
-        .then((response) => {
-            console.log("Response")
-            console.log(response.json())
+    }).then((response) => {
+        response.json().then((data) => {
+            let pos = data.BoardPosition
+            if (data.success !== true) {
+                console.log(pos)
+                p = {}
+                for (let k in pos) {
+                    if (pos[k] !== "") {
+                        p[k] = pos[k]
+                    }
+                }
+                board.position(p, false)
+            }
+        }
+        )
         });
 }
 
@@ -26,7 +38,7 @@ let board = Chessboard('board1', {
     draggable: true,
     dropOffBoard: 'snapback',
     position: 'start',
-    onChange: onChange
+    onDrop: onDrop,
 })
 
 $('#startBtn').on('click', board.start)
