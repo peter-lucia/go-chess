@@ -7,8 +7,11 @@ import (
 )
 
 func handleMove(mr ui.MoveRequest) (bool, ui.BoardPosition, error) {
-	// Handle chess move logic here
-	fmt.Println("Start", mr.Start, "End", mr.End)
+	// Returns true, new board detail, nil if the move was successful
+	// returns false, new board detail, nil if the move was a failure
+	// returns an error if there was a problem with the move
+	// TODO: Handle chess move logic here
+	fmt.Println("Start", mr.Start, "End", mr.End, "NewBoardPosition", mr.NewBoardPosition)
 	// TODO: Return the entire board after the move request
 	// with a move detail
 	return false, mr.NewBoardPosition, nil

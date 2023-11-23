@@ -22,6 +22,8 @@ type MoveRequest struct {
 }
 
 type BoardPosition struct {
+	// typical start:
+	// {wR wN wB wQ wK wB wN wR wP wP wP wP wP wP wP wP ... bP bP bP bP bP bP bP bP bR bN bB bQ bK bB bN bR}
 	A1 string `json:"a1"`
 	B1 string `json:"b1"`
 	C1 string `json:"c1"`
