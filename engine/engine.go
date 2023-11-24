@@ -74,10 +74,12 @@ func (b Board) moveIsWithinBoardBounds(row int, col int) (bool, error) {
 		return false, fmt.Errorf("Col out of position %d", col)
 	}
 
-	return b.State[row][col].CellType == Empty, nil
+	return true, nil
 }
 
 func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) {
+	// TODO: Prevent pawn moving up one and to the left unless opponent is there
+	// TODO: Prevent jumping over pieces
 
 	movingPieceType := p.CellType
 
@@ -91,7 +93,7 @@ func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) 
 			return false, nil
 		}
 	case P1King, P2King:
-		if rowDy == 1 && colDx == 0 || rowDy == 0 && colDx == 1 {
+		if math.Abs(float64(rowDy)) == 1 && colDx == 0 || rowDy == 0 && math.Abs(float64(colDx)) == 1 || math.Abs(float64(rowDy)) == 1 && math.Abs(float64(colDx)) == 1 {
 			return true, nil
 		} else {
 			return false, nil
@@ -105,7 +107,10 @@ func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) 
 			return true, nil
 		} else if math.Abs(float64(rowDy)) == 1 && math.Abs(float64(colDx)) == 2 {
 			return true, nil
-
+		}
+	case P1Rook, P2Rook:
+		if math.Abs(float64(rowDy)) > 0 && colDx == 0 || rowDy == 0 && math.Abs(float64(colDx)) > 0 {
+			return true, nil
 		}
 	case P1Pawn:
 		if rowDy == 1 || (rowDy == 2 && p.Row == 1) {
@@ -139,15 +144,14 @@ func (b Board) moveReachesEmptyCellOrOpponent(p *Piece, rowDy int, colDx int) (b
 		return false, fmt.Errorf("a piece cannot have an empty cell type")
 	}
 
-	destinationCell := b.State[newRow][newCol].CellType
-	// player 1 trying to move to existing p1 occupied cell
-	if p.CellType <= P1Pawn && destinationCell > Empty && destinationCell <= P1Pawn {
-		return false, nil
-	}
-
-	// player 2 trying to move to existing p2 occupied cell
-	if p.CellType > P1Pawn && destinationCell > P1Pawn {
-		return false, nil
+	destinationPiece := b.State[newRow][newCol]
+	if destinationPiece.CellType != Empty {
+		// check if destination piece is owned by the moving player
+		movingPieceIsP1, _ := p.isPlayer1()
+		destinationPieceIsP1, _ := destinationPiece.isPlayer1()
+		if movingPieceIsP1 == destinationPieceIsP1 {
+			return false, nil
+		}
 	}
 
 	return true, nil
