@@ -41,8 +41,8 @@ type Board struct {
 }
 
 type Piece struct {
-	row         int
-	col         int
+	Row         int
+	Col         int
 	moveUpDx    int
 	moveUpDy    int
 	moveLeftDx  int
@@ -68,10 +68,10 @@ func (b Board) moveIsWithinBoardBounds(row int, col int) (bool, error) {
 	n := len(b.State)
 	m := len(b.State[0])
 	if row >= n || row < 0 {
-		return false, fmt.Errorf("row out of position %d", row)
+		return false, fmt.Errorf("Row out of position %d", row)
 
 	} else if col >= m || col < 0 {
-		return false, fmt.Errorf("col out of position %d", col)
+		return false, fmt.Errorf("Col out of position %d", col)
 	}
 
 	return b.State[row][col].CellType == Empty, nil
@@ -108,11 +108,11 @@ func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) 
 
 		}
 	case P1Pawn:
-		if rowDy == 1 || (rowDy == 2 && p.row == 1) {
+		if rowDy == 1 || (rowDy == 2 && p.Row == 1) {
 			return true, nil
 		}
 	case P2Pawn:
-		if rowDy == -1 || (rowDy == -2 && p.row == 6) {
+		if rowDy == -1 || (rowDy == -2 && p.Row == 6) {
 			return true, nil
 		}
 	}
@@ -124,8 +124,8 @@ func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) 
 func (b Board) moveReachesEmptyCellOrOpponent(p *Piece, rowDy int, colDx int) (bool, error) {
 	rows := len(b.State)
 	cols := len(b.State[0])
-	newRow := p.row + rowDy
-	newCol := p.col + colDx
+	newRow := p.Row + rowDy
+	newCol := p.Col + colDx
 
 	if newRow < 0 || newRow >= rows {
 		return false, nil
@@ -191,8 +191,8 @@ func (b Board) moveDoesNotPutPieceKingInCheck(p Piece, rowDy int, colDx int) (bo
 
 	isP1, _ := p.isPlayer1()
 	tempB := b
-	tempB.State[p.row][p.col] = Piece{CellType: Empty}
-	tempB.State[p.row+rowDy][p.col+colDx] = p
+	tempB.State[p.Row][p.Col] = Piece{CellType: Empty}
+	tempB.State[p.Row+rowDy][p.Col+colDx] = p
 	p1InCheck, p2InCheck, _ := tempB.isEitherKingInCheck()
 
 	if p1InCheck && isP1 {
@@ -215,8 +215,8 @@ func (b Board) moveDoesNotIgnoreCurrentKingInCheck(p *Piece, rowDy int, colDx in
 
 func (p *Piece) validMove(rowDy int, colDx int, board *Board) (bool, error) {
 
-	newRow := p.row + rowDy
-	newCol := p.col + colDx
+	newRow := p.Row + rowDy
+	newCol := p.Col + colDx
 	moveWithinBounds, _ := board.moveIsWithinBoardBounds(newRow, newCol)
 	moveValidForPiece, _ := board.moveIsValidForPiece(*p, rowDy, colDx)
 	moveDestinationOK, _ := board.moveReachesEmptyCellOrOpponent(p, rowDy, colDx)
@@ -231,13 +231,13 @@ func (p *Piece) move(rowDy int, colDx int, board *Board) (bool, error) {
 		return false, err
 	}
 
-	newRow := p.row + rowDy
-	newCol := p.col + colDx
+	newRow := p.Row + rowDy
+	newCol := p.Col + colDx
 	if validMove {
-		board.State[p.row][p.col] = Piece{CellType: Empty}
-		p.row = newRow
-		p.col = newCol
-		board.State[p.row][p.col] = *p
+		board.State[p.Row][p.Col] = Piece{CellType: Empty}
+		p.Row = newRow
+		p.Col = newCol
+		board.State[p.Row][p.Col] = *p
 	}
 
 	return true, nil

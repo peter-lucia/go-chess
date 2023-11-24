@@ -19,16 +19,14 @@ function onDrop(oldPos, newPos) {
     }).then((response) => {
         response.json().then((data) => {
             let pos = data.BoardPosition
-            if (data.success !== true) {
-                console.log(pos)
-                p = {}
-                for (let k in pos) {
-                    if (pos[k] !== "") {
-                        p[k] = pos[k]
-                    }
+            console.log(pos)
+            p = {}
+            for (let k in pos) {
+                if (pos[k] !== "") {
+                    p[k] = pos[k]
                 }
-                board.position(p, false)
             }
+            board.position(p, false)
         }
         )
         });

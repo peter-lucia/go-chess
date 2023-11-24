@@ -69,6 +69,7 @@ type BoardPosition struct {
 	G5 string `json:"g5"`
 	H5 string `json:"h5"`
 
+	A6 string `json:"a6"`
 	B6 string `json:"b6"`
 	C6 string `json:"c6"`
 	D6 string `json:"d6"`
