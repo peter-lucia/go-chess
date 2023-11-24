@@ -41,7 +41,16 @@ func convertToUIPiece(piece engine.Piece) (string, error) {
 
 }
 
-func convertPiece(uiPiece string, row int, col int, b *engine.Board) (engine.Board, error) {
+func convertUICoordsToEngineCoords(uiPiece string) (int, int, error) {
+	// cols: a,b,c,d,e,f,g,h
+	col := int(uiPiece[0] - 'a')
+	// rows: 1,2,3,4,5,6,7
+	row := int(uiPiece[1] - '1')
+	return row, col, nil
+
+}
+
+func convertToEnginePieceOnBoard(uiPiece string, row int, col int, b *engine.Board) (engine.Board, error) {
 	// {wR wN wB wQ wK wB wN wR wP wP wP wP wP wP wP wP ... bP bP bP bP bP bP bP bP bR bN bB bQ bK bB bN bR}
 
 	switch uiPiece {
@@ -81,77 +90,77 @@ func convertPiece(uiPiece string, row int, col int, b *engine.Board) (engine.Boa
 func translateToEngineBoardPosition(uiBoard ui.BoardPosition) (engine.Board, error) {
 
 	b := engine.Board{}
-	b, _ = convertPiece(uiBoard.A8, 7, 0, &b)
-	b, _ = convertPiece(uiBoard.B8, 7, 1, &b)
-	b, _ = convertPiece(uiBoard.C8, 7, 2, &b)
-	b, _ = convertPiece(uiBoard.D8, 7, 3, &b)
-	b, _ = convertPiece(uiBoard.E8, 7, 4, &b)
-	b, _ = convertPiece(uiBoard.F8, 7, 5, &b)
-	b, _ = convertPiece(uiBoard.G8, 7, 6, &b)
-	b, _ = convertPiece(uiBoard.H8, 7, 7, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.A8, 7, 0, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.B8, 7, 1, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.C8, 7, 2, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.D8, 7, 3, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.E8, 7, 4, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.F8, 7, 5, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.G8, 7, 6, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.H8, 7, 7, &b)
 
-	b, _ = convertPiece(uiBoard.A7, 6, 0, &b)
-	b, _ = convertPiece(uiBoard.B7, 6, 1, &b)
-	b, _ = convertPiece(uiBoard.C7, 6, 2, &b)
-	b, _ = convertPiece(uiBoard.D7, 6, 3, &b)
-	b, _ = convertPiece(uiBoard.E7, 6, 4, &b)
-	b, _ = convertPiece(uiBoard.F7, 6, 5, &b)
-	b, _ = convertPiece(uiBoard.G7, 6, 6, &b)
-	b, _ = convertPiece(uiBoard.H7, 6, 7, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.A7, 6, 0, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.B7, 6, 1, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.C7, 6, 2, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.D7, 6, 3, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.E7, 6, 4, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.F7, 6, 5, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.G7, 6, 6, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.H7, 6, 7, &b)
 
-	b, _ = convertPiece(uiBoard.A6, 5, 0, &b)
-	b, _ = convertPiece(uiBoard.B6, 5, 1, &b)
-	b, _ = convertPiece(uiBoard.C6, 5, 2, &b)
-	b, _ = convertPiece(uiBoard.D6, 5, 3, &b)
-	b, _ = convertPiece(uiBoard.E6, 5, 4, &b)
-	b, _ = convertPiece(uiBoard.F6, 5, 5, &b)
-	b, _ = convertPiece(uiBoard.G6, 5, 6, &b)
-	b, _ = convertPiece(uiBoard.H6, 5, 7, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.A6, 5, 0, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.B6, 5, 1, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.C6, 5, 2, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.D6, 5, 3, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.E6, 5, 4, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.F6, 5, 5, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.G6, 5, 6, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.H6, 5, 7, &b)
 
-	b, _ = convertPiece(uiBoard.A5, 4, 0, &b)
-	b, _ = convertPiece(uiBoard.B5, 4, 1, &b)
-	b, _ = convertPiece(uiBoard.C5, 4, 2, &b)
-	b, _ = convertPiece(uiBoard.D5, 4, 3, &b)
-	b, _ = convertPiece(uiBoard.E5, 4, 4, &b)
-	b, _ = convertPiece(uiBoard.F5, 4, 5, &b)
-	b, _ = convertPiece(uiBoard.G5, 4, 6, &b)
-	b, _ = convertPiece(uiBoard.H5, 4, 7, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.A5, 4, 0, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.B5, 4, 1, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.C5, 4, 2, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.D5, 4, 3, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.E5, 4, 4, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.F5, 4, 5, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.G5, 4, 6, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.H5, 4, 7, &b)
 
-	b, _ = convertPiece(uiBoard.A4, 3, 0, &b)
-	b, _ = convertPiece(uiBoard.B4, 3, 1, &b)
-	b, _ = convertPiece(uiBoard.C4, 3, 2, &b)
-	b, _ = convertPiece(uiBoard.D4, 3, 3, &b)
-	b, _ = convertPiece(uiBoard.E4, 3, 4, &b)
-	b, _ = convertPiece(uiBoard.F4, 3, 5, &b)
-	b, _ = convertPiece(uiBoard.G4, 3, 6, &b)
-	b, _ = convertPiece(uiBoard.H4, 3, 7, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.A4, 3, 0, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.B4, 3, 1, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.C4, 3, 2, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.D4, 3, 3, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.E4, 3, 4, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.F4, 3, 5, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.G4, 3, 6, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.H4, 3, 7, &b)
 
-	b, _ = convertPiece(uiBoard.A3, 2, 0, &b)
-	b, _ = convertPiece(uiBoard.B3, 2, 1, &b)
-	b, _ = convertPiece(uiBoard.C3, 2, 2, &b)
-	b, _ = convertPiece(uiBoard.D3, 2, 3, &b)
-	b, _ = convertPiece(uiBoard.E3, 2, 4, &b)
-	b, _ = convertPiece(uiBoard.F3, 2, 5, &b)
-	b, _ = convertPiece(uiBoard.G3, 2, 6, &b)
-	b, _ = convertPiece(uiBoard.H3, 2, 7, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.A3, 2, 0, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.B3, 2, 1, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.C3, 2, 2, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.D3, 2, 3, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.E3, 2, 4, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.F3, 2, 5, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.G3, 2, 6, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.H3, 2, 7, &b)
 
-	b, _ = convertPiece(uiBoard.A2, 1, 0, &b)
-	b, _ = convertPiece(uiBoard.B2, 1, 1, &b)
-	b, _ = convertPiece(uiBoard.C2, 1, 2, &b)
-	b, _ = convertPiece(uiBoard.D2, 1, 3, &b)
-	b, _ = convertPiece(uiBoard.E2, 1, 4, &b)
-	b, _ = convertPiece(uiBoard.F2, 1, 5, &b)
-	b, _ = convertPiece(uiBoard.G2, 1, 6, &b)
-	b, _ = convertPiece(uiBoard.H2, 1, 7, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.A2, 1, 0, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.B2, 1, 1, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.C2, 1, 2, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.D2, 1, 3, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.E2, 1, 4, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.F2, 1, 5, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.G2, 1, 6, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.H2, 1, 7, &b)
 
-	b, _ = convertPiece(uiBoard.A1, 0, 0, &b)
-	b, _ = convertPiece(uiBoard.B1, 0, 1, &b)
-	b, _ = convertPiece(uiBoard.C1, 0, 2, &b)
-	b, _ = convertPiece(uiBoard.D1, 0, 3, &b)
-	b, _ = convertPiece(uiBoard.E1, 0, 4, &b)
-	b, _ = convertPiece(uiBoard.F1, 0, 5, &b)
-	b, _ = convertPiece(uiBoard.G1, 0, 6, &b)
-	b, _ = convertPiece(uiBoard.H1, 0, 7, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.A1, 0, 0, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.B1, 0, 1, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.C1, 0, 2, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.D1, 0, 3, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.E1, 0, 4, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.F1, 0, 5, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.G1, 0, 6, &b)
+	b, _ = convertToEnginePieceOnBoard(uiBoard.H1, 0, 7, &b)
 
 	return b, nil
 
@@ -256,13 +265,23 @@ func handleMove(mr ui.RequestMove) (bool, ui.BoardPosition, error) {
 	// Returns true, new board detail, nil if the move was successful
 	// returns false, new board detail, nil if the move was a failure
 	// returns an error if there was a problem with the move
-	fmt.Println("Start", mr.Start, "End", mr.End, "NewBoardPosition", mr.NewBoardPosition)
-	engineNewBoardPosition, _ := translateToEngineBoardPosition(mr.NewBoardPosition)
+	fmt.Println("Start", mr.Start, "End", mr.End, "OldBoardPosition", mr.OldBoardPosition)
+	engineBoardPosition, _ := translateToEngineBoardPosition(mr.OldBoardPosition)
+	engineOldBoardPosition := engineBoardPosition
 
-	// TODO: Logic on the new board position
-	// ...
+	startRow, startCol, _ := convertUICoordsToEngineCoords(mr.Start)
+	endRow, endCol, _ := convertUICoordsToEngineCoords(mr.End)
+	rowDy := endRow - startRow
+	colDx := endCol - startCol
 
-	uiNewBoardPosition, _ := translateToUIBoardPosition(engineNewBoardPosition)
+	p := engineBoardPosition.State[startRow][startCol]
+	success, _ := p.Move(rowDy, colDx, &engineBoardPosition)
+	if !success {
+		uiOldBoardPosition, _ := translateToUIBoardPosition(engineOldBoardPosition)
+		return false, uiOldBoardPosition, nil
+	}
+
+	uiNewBoardPosition, _ := translateToUIBoardPosition(engineBoardPosition)
 	return true, uiNewBoardPosition, nil
 }
 

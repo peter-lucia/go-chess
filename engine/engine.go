@@ -184,7 +184,7 @@ func (b Board) isEitherKingInCheck() (bool, bool, error) {
 
 }
 
-func (b Board) moveDoesNotPutPieceKingInCheck(p Piece, rowDy int, colDx int) (bool, error) {
+func (b Board) movePutsMovingPlayersKingInCheck(p Piece, rowDy int, colDx int) (bool, error) {
 	/*
 		Returns true if the move would put the moving player's king in check, false otherwise
 	*/
@@ -220,11 +220,11 @@ func (p *Piece) validMove(rowDy int, colDx int, board *Board) (bool, error) {
 	moveWithinBounds, _ := board.moveIsWithinBoardBounds(newRow, newCol)
 	moveValidForPiece, _ := board.moveIsValidForPiece(*p, rowDy, colDx)
 	moveDestinationOK, _ := board.moveReachesEmptyCellOrOpponent(p, rowDy, colDx)
-	moveDoesNotCauseCheck, _ := board.moveDoesNotPutPieceKingInCheck(*p, rowDy, colDx)
-	return moveWithinBounds && moveValidForPiece && moveDestinationOK && moveDoesNotCauseCheck, nil
+	moveCauseSelfCheck, _ := board.movePutsMovingPlayersKingInCheck(*p, rowDy, colDx)
+	return moveWithinBounds && moveValidForPiece && moveDestinationOK && !moveCauseSelfCheck, nil
 }
 
-func (p *Piece) move(rowDy int, colDx int, board *Board) (bool, error) {
+func (p *Piece) Move(rowDy int, colDx int, board *Board) (bool, error) {
 
 	validMove, err := p.validMove(rowDy, colDx, board)
 	if err != nil {

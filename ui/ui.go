@@ -33,7 +33,7 @@ type RequestFlip struct {
 type RequestMove struct {
 	Start            string        `json:"start"`
 	End              string        `json:"end"`
-	NewBoardPosition BoardPosition `json:"board"`
+	OldBoardPosition BoardPosition `json:"board"`
 }
 
 type BoardPosition struct {
