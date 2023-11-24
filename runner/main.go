@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/peter-lucia/go-chess/engine"
 	"github.com/peter-lucia/go-chess/ui"
@@ -42,6 +43,9 @@ func convertToUIPiece(piece engine.Piece) (string, error) {
 }
 
 func convertUICoordsToEngineCoords(uiPiece string) (int, int, error) {
+	if len(uiPiece) != 2 {
+		return 0, 0, errors.New("uninterpretable ui coords")
+	}
 	// cols: a,b,c,d,e,f,g,h
 	col := int(uiPiece[0] - 'a')
 	// rows: 1,2,3,4,5,6,7
@@ -268,8 +272,12 @@ func handleMove(mr ui.RequestMove) (bool, ui.BoardPosition, error) {
 	fmt.Println("Start", mr.Start, "End", mr.End, "OldBoardPosition", mr.OldBoardPosition)
 	engineBoardPosition, _ := translateToEngineBoardPosition(mr.OldBoardPosition)
 	engineOldBoardPosition := engineBoardPosition
+	uiOldBoardPosition, _ := translateToUIBoardPosition(engineOldBoardPosition)
 
-	startRow, startCol, _ := convertUICoordsToEngineCoords(mr.Start)
+	startRow, startCol, err := convertUICoordsToEngineCoords(mr.Start)
+	if err != nil {
+		return false, uiOldBoardPosition, err
+	}
 	endRow, endCol, _ := convertUICoordsToEngineCoords(mr.End)
 	rowDy := endRow - startRow
 	colDx := endCol - startCol
@@ -277,7 +285,6 @@ func handleMove(mr ui.RequestMove) (bool, ui.BoardPosition, error) {
 	p := engineBoardPosition.State[startRow][startCol]
 	success, _ := p.Move(rowDy, colDx, &engineBoardPosition)
 	if !success {
-		uiOldBoardPosition, _ := translateToUIBoardPosition(engineOldBoardPosition)
 		return false, uiOldBoardPosition, nil
 	}
 
