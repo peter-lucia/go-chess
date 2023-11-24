@@ -241,10 +241,11 @@ func handleMove(mr ui.MoveRequest) (bool, ui.BoardPosition, error) {
 	// returns false, new board detail, nil if the move was a failure
 	// returns an error if there was a problem with the move
 	fmt.Println("Start", mr.Start, "End", mr.End, "NewBoardPosition", mr.NewBoardPosition)
-	engineNewBoardPosition, _ := translateToEngineBoardPosition(mr.NewBoardPosition)
+	//engineNewBoardPosition, _ := translateToEngineBoardPosition(mr.NewBoardPosition)
 
 	// TODO: Logic on the new board position
 	// ...
+	engineNewBoardPosition, _ := engine.InitGame()
 
 	uiNewBoardPosition, _ := translateToUIBoardPosition(engineNewBoardPosition)
 	return true, uiNewBoardPosition, nil
@@ -264,6 +265,6 @@ func main() {
 
 	}
 	fmt.Println("        Player 2")
-	ui.StartUI(handleMove)
+	_ = ui.StartUI(handleMove)
 
 }

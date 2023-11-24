@@ -125,7 +125,7 @@ func handleMove(c echo.Context, cb MoveCallback) error {
 	return c.JSON(http.StatusOK, moveResponse)
 }
 
-func StartUI(cb MoveCallback) {
+func StartUI(cb MoveCallback) error {
 	// Create a new instance of Echo
 	e := echo.New()
 
@@ -148,4 +148,5 @@ func StartUI(cb MoveCallback) {
 
 	// Start the server
 	e.Logger.Fatal(e.Start(":8080"))
+	return nil
 }

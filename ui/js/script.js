@@ -1,7 +1,6 @@
 function onDrop(oldPos, newPos) {
     console.log('Position changed:')
     console.log('Old position: ' + JSON.stringify(oldPos))
-    console.log('New position: ' + JSON.stringify(newPos))
     console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
     // use go API to check validity of the move
     // if it's valid, accept the move, otherwise, snapback
@@ -22,7 +21,7 @@ function onDrop(oldPos, newPos) {
             console.log(pos)
             p = {}
             for (let k in pos) {
-                if (pos[k] !== "") {
+                if (pos[k] !== "empty") {
                     p[k] = pos[k]
                 }
             }
