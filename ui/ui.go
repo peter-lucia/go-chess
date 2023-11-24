@@ -7,15 +7,30 @@ import (
 	"strconv"
 )
 
-type MoveCallback func(MoveRequest) (bool, BoardPosition, error)
+type CallbackMove func(RequestMove) (bool, BoardPosition, error)
+type CallbackFlip func(RequestFlip) (bool, BoardPosition, error)
+type CallbackInit func() (bool, BoardPosition, error)
 
-type MoveResponse struct {
-	Request       MoveRequest
+type ResponseFlip struct {
+	Request       RequestFlip
+	BoardPosition BoardPosition
+}
+
+type ResponseInit struct {
+	BoardPosition BoardPosition
+}
+
+type ResponseMove struct {
+	Request       RequestMove
 	BoardPosition BoardPosition
 	Success       string `json:"success" xml:"success"`
 }
 
-type MoveRequest struct {
+type RequestFlip struct {
+	CurrentBoardPosition BoardPosition `json:"board"`
+}
+
+type RequestMove struct {
 	Start            string        `json:"start"`
 	End              string        `json:"end"`
 	NewBoardPosition BoardPosition `json:"board"`
@@ -97,10 +112,49 @@ type BoardPosition struct {
 	H8 string `json:"h8"`
 }
 
-func handleMove(c echo.Context, cb MoveCallback) error {
+func handleInit(c echo.Context, cb CallbackInit) error {
+	_, newPosition, err := cb()
+
+	if err != nil {
+		moveResponse := &ResponseInit{
+			BoardPosition: newPosition,
+		}
+		return c.JSON(http.StatusInternalServerError, moveResponse)
+	}
+	moveResponse := &ResponseInit{
+		BoardPosition: newPosition,
+	}
+	return c.JSON(http.StatusOK, moveResponse)
+}
+
+func handleFlip(c echo.Context, cb CallbackFlip) error {
+
+	var mr RequestFlip
+	err := c.Bind(&mr)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	_, newPosition, err := cb(mr)
+
+	if err != nil {
+		moveResponse := &ResponseMove{
+			Success:       strconv.FormatBool(false),
+			BoardPosition: newPosition,
+		}
+		return c.JSON(http.StatusInternalServerError, moveResponse)
+	}
+	moveResponse := &ResponseFlip{
+		Request:       mr,
+		BoardPosition: newPosition,
+	}
+	return c.JSON(http.StatusOK, moveResponse)
+}
+
+func handleMove(c echo.Context, cb CallbackMove) error {
 
 	// extract the json body parameters by binding to a move request struct
-	var mr MoveRequest
+	var mr RequestMove
 	err := c.Bind(&mr)
 
 	if err != nil {
@@ -110,14 +164,14 @@ func handleMove(c echo.Context, cb MoveCallback) error {
 	success, newPosition, err := cb(mr)
 
 	if err != nil {
-		moveResponse := &MoveResponse{
+		moveResponse := &ResponseMove{
 			Request:       mr,
 			Success:       strconv.FormatBool(false),
 			BoardPosition: newPosition,
 		}
 		return c.JSON(http.StatusInternalServerError, moveResponse)
 	}
-	moveResponse := &MoveResponse{
+	moveResponse := &ResponseMove{
 		Request:       mr,
 		Success:       strconv.FormatBool(success),
 		BoardPosition: newPosition,
@@ -125,7 +179,10 @@ func handleMove(c echo.Context, cb MoveCallback) error {
 	return c.JSON(http.StatusOK, moveResponse)
 }
 
-func StartUI(cb MoveCallback) error {
+func StartUI(
+	onMove CallbackMove,
+	onFlip CallbackFlip,
+	onInit CallbackInit) error {
 	// Create a new instance of Echo
 	e := echo.New()
 
@@ -142,7 +199,21 @@ func StartUI(cb MoveCallback) error {
 	e.POST(
 		"/move",
 		func(c echo.Context) error {
-			return handleMove(c, cb)
+			return handleMove(c, onMove)
+		},
+	)
+
+	e.POST(
+		"/flip",
+		func(c echo.Context) error {
+			return handleFlip(c, onFlip)
+		},
+	)
+
+	e.GET(
+		"/init",
+		func(c echo.Context) error {
+			return handleInit(c, onInit)
 		},
 	)
 
