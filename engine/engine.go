@@ -85,12 +85,10 @@ func (b Board) piecesBetweenOriginAndDestination(p Piece, startRow int, startCol
 	}
 
 	piecesFound := 0
-	row := 0
-	col := 0
 	_rowDy := rowDy
 	_colDx := colDx
 	for _rowDy != 0 || _colDx != 0 {
-		if b.State[startRow+_rowDy][startCol+_colDx].CellType != Empty && !(row == startRow && col == startCol) && !(_rowDy == rowDy && _colDx == colDx) {
+		if b.State[startRow+_rowDy][startCol+_colDx].CellType != Empty && !((startRow+_rowDy) == startRow && (startCol+_colDx) == startCol) && !(_rowDy == rowDy && _colDx == colDx) {
 			// if we're not at the starting location or the destination location and there is a piece
 			fmt.Println("Found", b.State[startRow+_rowDy][startCol+_colDx].CellType)
 			piecesFound++
