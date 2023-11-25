@@ -4,7 +4,10 @@ go 1.21.3
 
 require github.com/peter-lucia/go-chess/engine v0.0.0-00010101000000-000000000000
 
-require github.com/peter-lucia/go-chess/ui v0.0.0-00010101000000-000000000000
+require (
+	github.com/google/uuid v1.4.0
+	github.com/peter-lucia/go-chess/ui v0.0.0-00010101000000-000000000000
+)
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect

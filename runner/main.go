@@ -7,6 +7,9 @@ import (
 	"github.com/peter-lucia/go-chess/ui"
 )
 
+// map UUID to a board object pointer
+var gameLookup = make(map[string]*engine.Board)
+
 func convertToUIPiece(piece engine.Piece) (string, error) {
 	// {wR wN wB wQ wK wB wN wR wP wP wP wP wP wP wP wP ... bP bP bP bP bP bP bP bP bR bN bB bQ bK bB bN bR}
 
@@ -93,7 +96,12 @@ func convertToEnginePieceOnBoard(uiPiece string, row int, col int, b *engine.Boa
 
 func translateToEngineBoardPosition(uiBoard ui.BoardPosition) (engine.Board, error) {
 
-	b := engine.Board{}
+	b_ptr, found := gameLookup[uiBoard.UUID]
+	b := *b_ptr
+	if !found {
+		fmt.Println("Cannot find board")
+		return b, errors.New("cannot find board")
+	}
 	b, _ = convertToEnginePieceOnBoard(uiBoard.A8, 7, 0, &b)
 	b, _ = convertToEnginePieceOnBoard(uiBoard.B8, 7, 1, &b)
 	b, _ = convertToEnginePieceOnBoard(uiBoard.C8, 7, 2, &b)
@@ -173,6 +181,8 @@ func translateToEngineBoardPosition(uiBoard ui.BoardPosition) (engine.Board, err
 func translateToUIBoardPosition(engineBoardPosition engine.Board) (ui.BoardPosition, error) {
 
 	uiBoard := ui.BoardPosition{}
+	uiBoard.UUID = engineBoardPosition.Uuid.String()
+	uiBoard.IsPlayer1Turn = engineBoardPosition.IsPlayer1Turn
 	uiBoard.A8, _ = convertToUIPiece(engineBoardPosition.State[7][0])
 	uiBoard.B8, _ = convertToUIPiece(engineBoardPosition.State[7][1])
 	uiBoard.C8, _ = convertToUIPiece(engineBoardPosition.State[7][2])
@@ -253,6 +263,7 @@ func handleFlip(mr ui.RequestFlip) (bool, ui.BoardPosition, error) {
 	engineBoardPosition, _ := translateToEngineBoardPosition(mr.CurrentBoardPosition)
 
 	engineBoardPosition, _ = engine.FlipBoard(engineBoardPosition)
+	gameLookup[engineBoardPosition.Uuid.String()] = &engineBoardPosition
 	uiBoardPosition, _ := translateToUIBoardPosition(engineBoardPosition)
 	return true, uiBoardPosition, nil
 
@@ -260,6 +271,7 @@ func handleFlip(mr ui.RequestFlip) (bool, ui.BoardPosition, error) {
 
 func handleInit() (bool, ui.BoardPosition, error) {
 	engineNewBoardPosition, _ := engine.InitGame()
+	gameLookup[engineNewBoardPosition.Uuid.String()] = &engineNewBoardPosition
 	uiNewBoardPosition, _ := translateToUIBoardPosition(engineNewBoardPosition)
 	return true, uiNewBoardPosition, nil
 
@@ -270,42 +282,38 @@ func handleMove(mr ui.RequestMove) (bool, ui.BoardPosition, error) {
 	// returns false, new board detail, nil if the move was a failure
 	// returns an error if there was a problem with the move
 	fmt.Println("Start", mr.Start, "End", mr.End, "OldBoardPosition", mr.OldBoardPosition)
-	engineBoardPosition, _ := translateToEngineBoardPosition(mr.OldBoardPosition)
-	engineOldBoardPosition := engineBoardPosition
-	uiOldBoardPosition, _ := translateToUIBoardPosition(engineOldBoardPosition)
+	engineBoardPosition, found := gameLookup[mr.OldBoardPosition.UUID]
+	if !found {
+		return false, mr.OldBoardPosition, errors.New("cannot find game")
+	}
 
 	startRow, startCol, err := convertUICoordsToEngineCoords(mr.Start)
 	if err != nil {
-		return false, uiOldBoardPosition, err
+		fmt.Println("Problem converting UI coords")
+		return false, mr.OldBoardPosition, err
 	}
 	endRow, endCol, _ := convertUICoordsToEngineCoords(mr.End)
 	rowDy := endRow - startRow
 	colDx := endCol - startCol
 
 	p := engineBoardPosition.State[startRow][startCol]
-	success, _ := p.Move(rowDy, colDx, &engineBoardPosition)
+	success, engineNewBoardPosition, _ := p.Move(rowDy, colDx, *engineBoardPosition)
+
 	if !success {
-		return false, uiOldBoardPosition, nil
+		uiBoardPosition, _ := translateToUIBoardPosition(*engineBoardPosition)
+		return false, uiBoardPosition, nil
 	}
 
-	uiNewBoardPosition, _ := translateToUIBoardPosition(engineBoardPosition)
+	engineNewBoardPosition.IsPlayer1Turn = !engineNewBoardPosition.IsPlayer1Turn
+	gameLookup[engineNewBoardPosition.Uuid.String()] = &engineNewBoardPosition
+	uiNewBoardPosition, _ := translateToUIBoardPosition(engineNewBoardPosition)
+
 	return true, uiNewBoardPosition, nil
 }
 
 func main() {
 	fmt.Println("Let's play chess!")
 
-	board, _ := engine.InitGame()
-
-	fmt.Println("        Player 1")
-	for _, row := range board.State {
-		for _, col := range row {
-			fmt.Printf("%02d ", col.CellType) // %02d will pad 0's to make the width 2
-		}
-		fmt.Println()
-
-	}
-	fmt.Println("        Player 2")
 	_ = ui.StartUI(handleMove, handleFlip, handleInit)
 
 }

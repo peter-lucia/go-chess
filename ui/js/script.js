@@ -1,17 +1,30 @@
+let UUID = "";
+let IsPlayer1Turn= true;
+
+function extractGameStateData(pos) {
+    UUID = pos["uuid"]
+    console.log("UUID: ", UUID)
+    IsPlayer1Turn = pos["isPlayer1Turn"]
+    delete pos["uuid"]
+    delete pos["isPlayer1Turn"]
+    return pos
+}
 function onDrop(oldPos, newPos) {
+    let boardPosition = board.position()
+    boardPosition["uuid"] = UUID
     fetch("/move", {
         method: "POST",
         body: JSON.stringify({
             start: oldPos,
             end: newPos,
-            board: board.position()
+            board: boardPosition,
         }),
         headers: {
             "Content-Type": "application/json"
         }
     }).then((response) => {
         response.json().then((data) => {
-            let pos = data.BoardPosition
+            let pos = extractGameStateData(data.BoardPosition)
             p = {}
             for (let k in pos) {
                 if (pos[k] !== "empty") {
@@ -26,18 +39,19 @@ function onDrop(oldPos, newPos) {
 
 function flipBoard() {
     console.log("Flipping board...")
+    let boardPosition = board.position()
+    boardPosition["uuid"] = UUID
     fetch("/flip", {
         method: "POST",
         body: JSON.stringify({
-            board: board.position()
+            board: boardPosition,
         }),
         headers: {
             "Content-Type": "application/json"
         }
     }).then((response) => {
         response.json().then((data) => {
-                let pos = data.BoardPosition
-                console.log(pos)
+                let pos = extractGameStateData(data.BoardPosition)
                 p = {}
                 for (let k in pos) {
                     if (pos[k] !== "empty") {
@@ -60,7 +74,7 @@ function initBoard() {
         }
     }).then((response) => {
         response.json().then((data) => {
-                let pos = data.BoardPosition
+                let pos = extractGameStateData(data.BoardPosition)
                 console.log(pos)
                 p = {}
                 for (let k in pos) {
