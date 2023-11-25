@@ -45,8 +45,6 @@ type Board struct {
 }
 
 type Piece struct {
-	Row         int
-	Col         int
 	moveUpDx    int
 	moveUpDy    int
 	moveLeftDx  int
@@ -81,7 +79,7 @@ func (b Board) moveIsWithinBoardBounds(row int, col int) (bool, error) {
 	return true, nil
 }
 
-func (b Board) piecesBetweenOriginAndDestination(p Piece, rowDy int, colDx int) (bool, error) {
+func (b Board) piecesBetweenOriginAndDestination(p Piece, startRow int, startCol int, rowDy int, colDx int) (bool, error) {
 	if p.CellType == Empty || p.CellType == P1Horse || p.CellType == P2Horse {
 		return false, nil
 	}
@@ -92,9 +90,9 @@ func (b Board) piecesBetweenOriginAndDestination(p Piece, rowDy int, colDx int) 
 	_rowDy := rowDy
 	_colDx := colDx
 	for _rowDy != 0 || _colDx != 0 {
-		if b.State[p.Row+_rowDy][p.Col+_colDx].CellType != Empty && !(row == p.Row && col == p.Col) && !(_rowDy == rowDy && _colDx == colDx) {
+		if b.State[startRow+_rowDy][startCol+_colDx].CellType != Empty && !(row == startRow && col == startCol) && !(_rowDy == rowDy && _colDx == colDx) {
 			// if we're not at the starting location or the destination location and there is a piece
-			fmt.Println("Found", b.State[p.Row+_rowDy][p.Col+_colDx].CellType)
+			fmt.Println("Found", b.State[startRow+_rowDy][startCol+_colDx].CellType)
 			piecesFound++
 		}
 		if _rowDy > 0 {
@@ -112,12 +110,12 @@ func (b Board) piecesBetweenOriginAndDestination(p Piece, rowDy int, colDx int) 
 	return piecesFound > 0, nil
 }
 
-func (b Board) moveJumpsPiecesCorrectly(p Piece, rowDy int, colDx int) (bool, error) {
+func (b Board) moveJumpsPiecesCorrectly(p Piece, startRow int, startCol int, rowDy int, colDx int) (bool, error) {
 
 	// Check if a non horse piece tries to jump other pieces between
 	// the origin and destination
 	if p.CellType != P1Horse && p.CellType != P2Horse {
-		piecesBetweenOrigDest, _ := b.piecesBetweenOriginAndDestination(p, rowDy, colDx)
+		piecesBetweenOrigDest, _ := b.piecesBetweenOriginAndDestination(p, startRow, startCol, rowDy, colDx)
 		if piecesBetweenOrigDest {
 			return false, nil
 		}
@@ -125,7 +123,7 @@ func (b Board) moveJumpsPiecesCorrectly(p Piece, rowDy int, colDx int) (bool, er
 	return true, nil
 }
 
-func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) {
+func (b Board) moveIsValidForPiece(p Piece, startRow int, startCol int, rowDy int, colDx int) (bool, error) {
 
 	isP1, _ := p.isPlayer1()
 	switch p.CellType {
@@ -166,7 +164,7 @@ func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) 
 			return true, nil
 		} else if !isP1 && b.BoardIsFlipped && rowDy == 1 && math.Abs(float64(colDx)) <= 1 {
 			return true, nil
-		} else if math.Abs(float64(rowDy)) == 2 && (p.Row == 1 || p.Row == 6) {
+		} else if math.Abs(float64(rowDy)) == 2 && (startRow == 1 || startRow == 6) {
 			return true, nil
 		}
 	}
@@ -175,11 +173,11 @@ func (b Board) moveIsValidForPiece(p Piece, rowDy int, colDx int) (bool, error) 
 
 }
 
-func (b Board) moveReachesEmptyCellOrOpponent(p *Piece, rowDy int, colDx int) (bool, error) {
+func (b Board) moveReachesEmptyCellOrOpponent(p *Piece, startRow int, startCol int, rowDy int, colDx int) (bool, error) {
 	rows := len(b.State)
 	cols := len(b.State[0])
-	newRow := p.Row + rowDy
-	newCol := p.Col + colDx
+	newRow := startRow + rowDy
+	newCol := startCol + colDx
 
 	if newRow < 0 || newRow >= rows {
 		return false, nil
@@ -262,15 +260,15 @@ func (b Board) isEitherKingInCheck() (bool, bool, error) {
 
 }
 
-func (b Board) movePutsMovingPlayersKingInCheck(p Piece, rowDy int, colDx int) (bool, error) {
+func (b Board) movePutsMovingPlayersKingInCheck(p Piece, startRow int, startCol int, rowDy int, colDx int) (bool, error) {
 	/*
 		Returns true if the move would put the moving player's king in check, false otherwise
 	*/
 
 	isP1, _ := p.isPlayer1()
 	tempB := b
-	tempB.State[p.Row][p.Col] = Piece{CellType: Empty}
-	tempB.State[p.Row+rowDy][p.Col+colDx] = p
+	tempB.State[startRow][startCol] = Piece{CellType: Empty}
+	tempB.State[startRow+rowDy][startCol+colDx] = p
 	p1InCheck, p2InCheck, _ := tempB.isEitherKingInCheck()
 
 	if p1InCheck && isP1 {
@@ -296,10 +294,10 @@ func (b Board) moveByCorrectPlayer(p Piece) (bool, error) {
 	return (b.IsPlayer1Turn && isP1) || (!b.IsPlayer1Turn && !isP1), nil
 }
 
-func (p *Piece) validMove(rowDy int, colDx int, board *Board) (bool, error) {
+func (p *Piece) validMove(startRow int, startCol int, rowDy int, colDx int, board *Board) (bool, error) {
 
-	newRow := p.Row + rowDy
-	newCol := p.Col + colDx
+	newRow := startRow + rowDy
+	newCol := startCol + colDx
 	fmt.Println("Board UUID", board.Uuid.String())
 	moveByCorrectPlayer, _ := board.moveByCorrectPlayer(*p)
 	fmt.Println("Move by correct player", moveByCorrectPlayer)
@@ -311,23 +309,23 @@ func (p *Piece) validMove(rowDy int, colDx int, board *Board) (bool, error) {
 	if !moveWithinBounds {
 		return false, nil
 	}
-	moveValidForPiece, _ := board.moveIsValidForPiece(*p, rowDy, colDx)
+	moveValidForPiece, _ := board.moveIsValidForPiece(*p, startRow, startCol, rowDy, colDx)
 	fmt.Println("Move valid for piece", moveValidForPiece)
 	if !moveValidForPiece {
 		return false, nil
 	}
-	moveReachesEmptyCellOrOpponent, _ := board.moveReachesEmptyCellOrOpponent(p, rowDy, colDx)
+	moveReachesEmptyCellOrOpponent, _ := board.moveReachesEmptyCellOrOpponent(p, startRow, startCol, rowDy, colDx)
 	fmt.Println("Move reaches empty cell or opponent", moveReachesEmptyCellOrOpponent)
 	if !moveReachesEmptyCellOrOpponent {
 		return false, nil
 	}
-	moveCauseSelfCheck, _ := board.movePutsMovingPlayersKingInCheck(*p, rowDy, colDx)
+	moveCauseSelfCheck, _ := board.movePutsMovingPlayersKingInCheck(*p, startRow, startCol, rowDy, colDx)
 	fmt.Println("Move causes self check", moveCauseSelfCheck)
 	if moveCauseSelfCheck {
 		return false, nil
 
 	}
-	moveJumpsPiecesCorrectly, _ := board.moveJumpsPiecesCorrectly(*p, rowDy, colDx)
+	moveJumpsPiecesCorrectly, _ := board.moveJumpsPiecesCorrectly(*p, startRow, startCol, rowDy, colDx)
 	fmt.Println("Move jumps pieces correctly", moveJumpsPiecesCorrectly)
 	if !moveJumpsPiecesCorrectly {
 		return false, nil
@@ -336,25 +334,21 @@ func (p *Piece) validMove(rowDy int, colDx int, board *Board) (bool, error) {
 	return moveByCorrectPlayer && moveWithinBounds && moveValidForPiece && moveReachesEmptyCellOrOpponent && !moveCauseSelfCheck && moveJumpsPiecesCorrectly, nil
 }
 
-func (p *Piece) Move(rowDy int, colDx int, board Board) (bool, Board, error) {
+func (p *Piece) Move(startRow int, startCol int, rowDy int, colDx int, board *Board) (bool, Board, error) {
 
-	validMove, err := p.validMove(rowDy, colDx, &board)
+	validMove, err := p.validMove(startRow, startCol, rowDy, colDx, board)
 	if err != nil {
-		return false, board, err
+		return false, *board, err
 	}
 
-	newRow := p.Row + rowDy
-	newCol := p.Col + colDx
 	if validMove {
-		board.State[p.Row][p.Col] = Piece{CellType: Empty, Row: p.Row, Col: p.Col}
-		p.Row = newRow
-		p.Col = newCol
-		board.State[p.Row][p.Col] = *p
+		board.State[startRow][startCol] = Piece{CellType: Empty}
+		board.State[startRow+rowDy][startCol+colDx] = *p
 	} else {
-		return false, board, nil
+		return false, *board, nil
 	}
 
-	return true, board, nil
+	return true, *board, nil
 }
 
 func (b *Board) convertPawns(convertToCellType Cell) (bool, error) {
@@ -374,6 +368,7 @@ func (b *Board) convertPawns(convertToCellType Cell) (bool, error) {
 }
 
 func ReverseBoardRow(arr [8]Piece) ([8]Piece, error) {
+	// TODO: Update piece rows and cols or remove this from the piece attribute
 	left := 0
 	right := len(arr) - 1
 
@@ -441,8 +436,6 @@ func InitGame() (Board, error) {
 			} else if row == 6 {
 				board.State[row][col] = Piece{CellType: P2Pawn}
 			}
-			board.State[row][col].Row = row
-			board.State[row][col].Col = col
 		}
 	}
 

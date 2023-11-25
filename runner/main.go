@@ -62,32 +62,32 @@ func convertToEnginePieceOnBoard(uiPiece string, row int, col int, b *engine.Boa
 
 	switch uiPiece {
 	case "wR":
-		b.State[row][col] = engine.Piece{CellType: engine.P1Rook, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P1Rook}
 	case "wN":
-		b.State[row][col] = engine.Piece{CellType: engine.P1Horse, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P1Horse}
 	case "wB":
-		b.State[row][col] = engine.Piece{CellType: engine.P1Bishop, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P1Bishop}
 	case "wQ":
-		b.State[row][col] = engine.Piece{CellType: engine.P1Queen, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P1Queen}
 	case "wK":
-		b.State[row][col] = engine.Piece{CellType: engine.P1King, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P1King}
 	case "wP":
-		b.State[row][col] = engine.Piece{CellType: engine.P1Pawn, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P1Pawn}
 
 	case "bR":
-		b.State[row][col] = engine.Piece{CellType: engine.P2Rook, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P2Rook}
 	case "bN":
-		b.State[row][col] = engine.Piece{CellType: engine.P2Horse, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P2Horse}
 	case "bB":
-		b.State[row][col] = engine.Piece{CellType: engine.P2Bishop, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P2Bishop}
 	case "bQ":
-		b.State[row][col] = engine.Piece{CellType: engine.P2Queen, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P2Queen}
 	case "bK":
-		b.State[row][col] = engine.Piece{CellType: engine.P2King, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P2King}
 	case "bP":
-		b.State[row][col] = engine.Piece{CellType: engine.P2Pawn, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.P2Pawn}
 	default:
-		b.State[row][col] = engine.Piece{CellType: engine.Empty, Row: row, Col: col}
+		b.State[row][col] = engine.Piece{CellType: engine.Empty}
 
 	}
 
@@ -281,8 +281,7 @@ func handleMove(mr ui.RequestMove) (bool, ui.BoardPosition, error) {
 	// Returns true, new board detail, nil if the move was successful
 	// returns false, new board detail, nil if the move was a failure
 	// returns an error if there was a problem with the move
-	fmt.Println("Start", mr.Start, "End", mr.End, "OldBoardPosition", mr.OldBoardPosition)
-	engineBoardPosition, found := gameLookup[mr.OldBoardPosition.UUID]
+	engineOldBoardPosition, found := gameLookup[mr.OldBoardPosition.UUID]
 	if !found {
 		return false, mr.OldBoardPosition, errors.New("cannot find game")
 	}
@@ -296,11 +295,11 @@ func handleMove(mr ui.RequestMove) (bool, ui.BoardPosition, error) {
 	rowDy := endRow - startRow
 	colDx := endCol - startCol
 
-	p := engineBoardPosition.State[startRow][startCol]
-	success, engineNewBoardPosition, _ := p.Move(rowDy, colDx, *engineBoardPosition)
+	p := engineOldBoardPosition.State[startRow][startCol]
+	success, engineNewBoardPosition, _ := p.Move(startRow, startCol, rowDy, colDx, engineOldBoardPosition)
 
 	if !success {
-		uiBoardPosition, _ := translateToUIBoardPosition(*engineBoardPosition)
+		uiBoardPosition, _ := translateToUIBoardPosition(*engineOldBoardPosition)
 		return false, uiBoardPosition, nil
 	}
 
