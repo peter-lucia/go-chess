@@ -1,5 +1,7 @@
 # Go Play Chess
 
+![Go Play Chess](images/go_chess.jpg)
+
 #### Planned Features
 
 * Write reinforcement learning algorithm like Q-Learning with experience replay and run it against stockfish / established algos
