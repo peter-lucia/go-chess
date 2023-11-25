@@ -5,6 +5,11 @@
     top: 10%;
 }
 
+#IsPlayer1Turn {
+    position: absolute;
+    left: 44%;
+}
+
 #flipBoardBtn {
     position: absolute;
     left: 37%;

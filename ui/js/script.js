@@ -5,6 +5,7 @@ function extractGameStateData(pos) {
     UUID = pos["uuid"]
     console.log("UUID: ", UUID)
     IsPlayer1Turn = pos["isPlayer1Turn"]
+    document.getElementById("IsPlayer1Turn").innerHTML = IsPlayer1Turn ? "White's turn!" : "Black's turn!"
     delete pos["uuid"]
     delete pos["isPlayer1Turn"]
     return pos
