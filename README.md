@@ -7,7 +7,8 @@
 * [ ] Enabling Castling
 * [ ] Queening a pawn or maybe selecting desired piece for promoting a pawn
 * [ ] Detecting self check and putting opponent in check
-* [ ] Detecting check mate
+* [ ] Detecting checkmate
+* [ ] Detecting stalemate
  
 #### Planned Features
 
