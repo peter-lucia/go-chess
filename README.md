@@ -9,6 +9,8 @@
 * [ ] Detecting self check and putting opponent in check
 * [ ] Detecting checkmate
 * [ ] Detecting stalemate or dead position https://en.wikipedia.org/wiki/Rules_of_chess
+* [ ] Enable propose stalemate
+* [ ] Online Multiplayer
 * [ ] Pawn en passant, https://en.wikipedia.org/wiki/Rules_of_chess
  
 #### Planned Features
