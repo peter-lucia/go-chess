@@ -5,10 +5,11 @@
 
 #### TODO Game Logic Features
 * [ ] Enabling Castling
-* [ ] Queening a pawn or maybe selecting desired piece for promoting a pawn
+* [ ] Pawn promotion with queen, bishop, horse, or rook
 * [ ] Detecting self check and putting opponent in check
 * [ ] Detecting checkmate
-* [ ] Detecting stalemate
+* [ ] Detecting stalemate or dead position https://en.wikipedia.org/wiki/Rules_of_chess
+* [ ] Pawn en passant, https://en.wikipedia.org/wiki/Rules_of_chess
  
 #### Planned Features
 
