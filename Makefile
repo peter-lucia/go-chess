@@ -13,6 +13,6 @@ compile-and-run: ## Build the application
 	go build main.go
 	./main
 
-run: ## Run the application, requires the workspace (go.work) to be setup
+run: ## Run the application
 	go run main.go
 
