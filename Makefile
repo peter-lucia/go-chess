@@ -1,4 +1,4 @@
-.PHONY:
+.PHONY: help
 .DEFAULT_GOAL := help
 
 
@@ -9,10 +9,9 @@ help: ## Show a list of available commands
 go-help: ## Print go help screen
 	go help
 
-build: ## Build the application
-	go build ./engine/engine.go
+compile-and-run: ## Build the application
 	go build ./runner/main.go
-	go build ./ui/ui.go
+	./main
 
 run: ## Run the application, requires the workspace (go.work) to be setup
 	go run ./runner
