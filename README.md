@@ -7,16 +7,17 @@ A chess engine written in go with a frontend written in js.
 
 ### Getting Started
 
-Run without compiling
+Run via
 
 ```shell
 make run
-
 ```
-Open a browser to localhost:8080 to play!
 
-Compile then run the binary:
+or
+
 ```shell
 make compile-and-run
-
 ```
+
+Open a browser to [http://localhost:8080](http://localhost:8080) to play!
+
