@@ -2,21 +2,62 @@
     width: 600px;
     position: absolute;
     left: 30%;
-    top: 10%;
+    top: 15%;
 }
 
 #IsPlayer1Turn {
     position: absolute;
-    left: 44%;
+    left: 45%;
+    background-color: white; /* Green background */
+    color: black; /* White text */
+    border: none; /* No border */
+    padding: 15px 32px; /* Padding for a larger button */
+    text-align: center; /* Center the text */
+    text-decoration: none; /* No underline */
+    display: inline-block; /* Align buttons inline */
+    font-size: 16px; /* Font size */
+    margin: 4px 2px; /* Margin around buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 8px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+
+/* General button styles */
+button {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    padding: 15px 32px; /* Padding for a larger button */
+    text-align: center; /* Center the text */
+    text-decoration: none; /* No underline */
+    display: inline-block; /* Align buttons inline */
+    font-size: 16px; /* Font size */
+    margin: 4px 2px; /* Margin around buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 8px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+}
+
+/* Hover effects */
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: scale(1.05); /* Slightly increase size */
+}
+
+/* Specific styles for each button */
+#startBtn {
+    background-color: #4CAF50; /* Green */
+    position: absolute;
+    left: 30%;
 }
 
 #flipBoardBtn {
+    background-color: #2196F3; /* Blue */
     position: absolute;
-    left: 37%;
+    left: 60%;
 }
 
-#startBtn {
-    position: absolute;
-    left: 30%;
-
+#flipBoardBtn:hover {
+    background-color: #0b7dda; /* Darker blue on hover */
 }
