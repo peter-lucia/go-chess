@@ -183,6 +183,8 @@ func translateToUIBoardPosition(engineBoardPosition engine.Board) (ui.BoardPosit
 	uiBoard := ui.BoardPosition{}
 	uiBoard.UUID = engineBoardPosition.Uuid.String()
 	uiBoard.IsPlayer1Turn = engineBoardPosition.IsPlayer1Turn
+	uiBoard.Checkmate = engineBoardPosition.CheckMate
+	uiBoard.Winner = engineBoardPosition.Winner
 	uiBoard.A8, _ = convertToUIPiece(engineBoardPosition.State[7][0])
 	uiBoard.B8, _ = convertToUIPiece(engineBoardPosition.State[7][1])
 	uiBoard.C8, _ = convertToUIPiece(engineBoardPosition.State[7][2])
@@ -270,7 +272,7 @@ func handleFlip(mr ui.RequestFlip) (bool, ui.BoardPosition, error) {
 }
 
 func handleInit() (bool, ui.BoardPosition, error) {
-	engineNewBoardPosition, _ := engine.InitGame()
+	engineNewBoardPosition, _ := engine.NewBoard()
 	gameLookup[engineNewBoardPosition.Uuid.String()] = &engineNewBoardPosition
 	uiNewBoardPosition, _ := translateToUIBoardPosition(engineNewBoardPosition)
 	return true, uiNewBoardPosition, nil

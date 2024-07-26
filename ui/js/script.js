@@ -4,10 +4,18 @@ let IsPlayer1Turn= true;
 function extractGameStateData(pos) {
     UUID = pos["uuid"]
     console.log("UUID: ", UUID)
+    console.log("checkmate: ", pos["checkmate"])
+    console.log("winner: ", pos["winner"])
     IsPlayer1Turn = pos["isPlayer1Turn"]
-    document.getElementById("IsPlayer1Turn").innerHTML = IsPlayer1Turn ? "White's turn!" : "Black's turn!"
+    if (pos["checkmate"] === true && pos["winner"] !== "none") {
+        document.getElementById("IsPlayer1Turn").innerHTML = "Checkmate! " + pos["winner"] + " Wins!"
+    } else {
+        document.getElementById("IsPlayer1Turn").innerHTML = IsPlayer1Turn ? "White's turn!" : "Black's turn!"
+    }
     delete pos["uuid"]
     delete pos["isPlayer1Turn"]
+    delete pos["checkmate"]
+    delete pos["winner"]
     return pos
 }
 function onDrop(oldPos, newPos) {
