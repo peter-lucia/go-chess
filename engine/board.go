@@ -273,20 +273,20 @@ func (b Board) isCheckmate() (bool, string, error) {
 	kingPieceIsP1, _ := kingPiece.isPlayer1()
 	fmt.Println("KingPiece is Player 1?", kingPieceIsP1)
 
+	// TODO: check if any other piece can get in the way of putting the king in check
+	// TODO: check if any other piece can kill the opponent's piece putting the king in check
+
+	// If no other piece can intervene, check if the king can move
 	for dx := -1; dx <= 1; dx++ {
 		for dy := -1; dy <= 1; dy++ {
 			bTemp, _ := b.createCopy()
 			kingCanMoveHere, _ := bTemp.movePutsMovingPlayersKingInCheck(kingPiece, p1KingRow, p1KingCol, dy, dx)
 			if kingCanMoveHere {
-				return true, "none", nil
+				return false, "none", nil
 			}
 
 		}
 	}
-
-	// TODO: check if any other piece can kill the opponent's piece putting the king in check
-
-	// TODO: check if any other piece can get in the way of putting the king in check
 
 	// checkmate
 	return true, winner, nil
