@@ -55,13 +55,16 @@ func NewBoard() (Board, error) {
 	board.State[0][7] = Piece{CellType: P1Rook}
 	board.BoardIsFlipped = false
 	board.IsPlayer1Turn = true
+	board.CheckMate = false
+	board.Winner = "none"
+
 	board.Uuid, _ = uuid.NewUUID()
 
 	board.State[7][0] = Piece{CellType: P2Rook}
 	board.State[7][1] = Piece{CellType: P2Horse}
 	board.State[7][2] = Piece{CellType: P2Bishop}
-	board.State[7][3] = Piece{CellType: P2King}
-	board.State[7][4] = Piece{CellType: P2Queen}
+	board.State[7][3] = Piece{CellType: P2Queen}
+	board.State[7][4] = Piece{CellType: P2King}
 	board.State[7][5] = Piece{CellType: P2Bishop}
 	board.State[7][6] = Piece{CellType: P2Horse}
 	board.State[7][7] = Piece{CellType: P2Rook}
@@ -75,9 +78,6 @@ func NewBoard() (Board, error) {
 			}
 		}
 	}
-
-	board.CheckMate = false
-	board.Winner = "none"
 
 	return board, nil
 
