@@ -14,7 +14,7 @@ type Piece struct {
 	CellType    Cell
 }
 
-func (p *Piece) validMove(startRow int, startCol int, rowDy int, colDx int, board *Board) (bool, error) {
+func (p Piece) validMove(startRow int, startCol int, rowDy int, colDx int, board *Board) (bool, error) {
 	/*
 		Check if the provided move parameters constitutes a valid move
 	*/
@@ -22,7 +22,7 @@ func (p *Piece) validMove(startRow int, startCol int, rowDy int, colDx int, boar
 	newRow := startRow + rowDy
 	newCol := startCol + colDx
 	fmt.Println("Board UUID", board.Uuid.String())
-	moveByCorrectPlayer, _ := board.moveByCorrectPlayer(*p)
+	moveByCorrectPlayer, _ := board.moveByCorrectPlayer(p)
 	fmt.Println("Move by correct player", moveByCorrectPlayer)
 	if !moveByCorrectPlayer {
 		return false, nil
@@ -32,7 +32,7 @@ func (p *Piece) validMove(startRow int, startCol int, rowDy int, colDx int, boar
 	if !moveWithinBounds {
 		return false, nil
 	}
-	moveValidForPiece, _ := board.moveIsValidForPiece(*p, startRow, startCol, rowDy, colDx)
+	moveValidForPiece, _ := board.moveIsValidForPiece(p, startRow, startCol, rowDy, colDx)
 	fmt.Println("Move valid for piece", moveValidForPiece)
 	if !moveValidForPiece {
 		return false, nil
@@ -42,13 +42,13 @@ func (p *Piece) validMove(startRow int, startCol int, rowDy int, colDx int, boar
 	if !moveReachesEmptyCellOrOpponent {
 		return false, nil
 	}
-	moveCauseSelfCheck, _ := board.movePutsMovingPlayersKingInCheck(*p, startRow, startCol, rowDy, colDx)
+	moveCauseSelfCheck, _ := board.movePutsMovingPlayersKingInCheck(p, startRow, startCol, rowDy, colDx)
 	fmt.Println("Move causes self check", moveCauseSelfCheck)
 	if moveCauseSelfCheck {
 		return false, nil
 
 	}
-	moveJumpsPiecesCorrectly, _ := board.moveJumpsPiecesCorrectly(*p, startRow, startCol, rowDy, colDx)
+	moveJumpsPiecesCorrectly, _ := board.moveJumpsPiecesCorrectly(p, startRow, startCol, rowDy, colDx)
 	fmt.Println("Move jumps pieces correctly", moveJumpsPiecesCorrectly)
 	if !moveJumpsPiecesCorrectly {
 		return false, nil
@@ -92,7 +92,7 @@ func (p Piece) hasKingInCheck(b Board, pieceRow int, pieceCol int) (bool, error)
 		colDx = p1KingCol - pieceCol
 	}
 	validForPiece, _ := b.moveIsValidForPiece(p, pieceRow, pieceCol, rowDy, colDx)
-	moveReachesEmptyCellOrOpponent, _ := b.moveReachesEmptyCellOrOpponent(&p, pieceRow, pieceCol, rowDy, colDx)
+	moveReachesEmptyCellOrOpponent, _ := b.moveReachesEmptyCellOrOpponent(p, pieceRow, pieceCol, rowDy, colDx)
 	moveJumpsPiecesCorrectly, _ := b.moveJumpsPiecesCorrectly(p, pieceRow, pieceCol, rowDy, colDx)
 	return validForPiece && moveReachesEmptyCellOrOpponent && moveJumpsPiecesCorrectly, nil
 

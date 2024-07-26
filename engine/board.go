@@ -135,7 +135,7 @@ func (b Board) moveIsValidForPiece(p Piece, startRow int, startCol int, rowDy in
 
 }
 
-func (b Board) moveReachesEmptyCellOrOpponent(p *Piece, startRow int, startCol int, rowDy int, colDx int) (bool, error) {
+func (b Board) moveReachesEmptyCellOrOpponent(p Piece, startRow int, startCol int, rowDy int, colDx int) (bool, error) {
 	rows := len(b.State)
 	cols := len(b.State[0])
 	newRow := startRow + rowDy
