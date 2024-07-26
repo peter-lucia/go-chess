@@ -161,7 +161,7 @@ func (b Board) moveReachesEmptyCellOrOpponent(p Piece, startRow int, startCol in
 		if movingPieceIsP1 == destinationPieceIsP1 {
 			return false, nil
 		}
-		if (p.CellType == P1Pawn || p.CellType == P2Pawn) && (colDx == 0 && math.Abs(float64(rowDy)) == 1) {
+		if (p.CellType == P1Pawn || p.CellType == P2Pawn) && (colDx == 0 && math.Abs(float64(rowDy)) >= 1) {
 			// pawns can't kill an opponent directly in front of them
 			return false, nil
 		}
