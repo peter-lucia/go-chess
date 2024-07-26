@@ -181,12 +181,11 @@ func (b Board) printGame() {
 		fmt.Println("        Player 2")
 	}
 
-	for _, row := range b.State {
-		for _, col := range row {
-			fmt.Printf("%02d ", col.CellType) // %02d will pad 0's to make the width 2
+	for row := len(b.State) - 1; row >= 0; row-- {
+		for col := 0; col < len(b.State[row]); col++ {
+			fmt.Printf("%02d ", b.State[row][col].CellType) // %02d will pad 0's to make the width 2
 		}
 		fmt.Println()
-
 	}
 	if b.BoardIsFlipped {
 		fmt.Println("        Player 2")

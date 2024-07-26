@@ -45,18 +45,6 @@ func convertToUIPiece(piece engine.Piece) (string, error) {
 
 }
 
-func convertUICoordsToEngineCoords(uiPiece string) (int, int, error) {
-	if len(uiPiece) != 2 {
-		return 0, 0, errors.New("uninterpretable ui coords")
-	}
-	// cols: a,b,c,d,e,f,g,h
-	col := int(uiPiece[0] - 'a')
-	// rows: 1,2,3,4,5,6,7
-	row := int(uiPiece[1] - '1')
-	return row, col, nil
-
-}
-
 func convertToEnginePieceOnBoard(uiPiece string, row int, col int, b *engine.Board) (engine.Board, error) {
 	// {wR wN wB wQ wK wB wN wR wP wP wP wP wP wP wP wP ... bP bP bP bP bP bP bP bP bR bN bB bQ bK bB bN bR}
 
@@ -288,12 +276,12 @@ func handleMove(mr ui.RequestMove) (bool, ui.BoardPosition, error) {
 		return false, mr.OldBoardPosition, errors.New("cannot find game")
 	}
 
-	startRow, startCol, err := convertUICoordsToEngineCoords(mr.Start)
+	startRow, startCol, err := engine.ConvertUICoordsToEngineCoords(mr.Start)
 	if err != nil {
 		fmt.Println("Problem converting UI coords")
 		return false, mr.OldBoardPosition, err
 	}
-	endRow, endCol, _ := convertUICoordsToEngineCoords(mr.End)
+	endRow, endCol, _ := engine.ConvertUICoordsToEngineCoords(mr.End)
 	rowDy := endRow - startRow
 	colDx := endCol - startCol
 

@@ -3,6 +3,7 @@ package engine
 import "fmt"
 
 type Piece struct {
+	// TODO: Use these, convert to vectors for non-jumping pieces, or get rid of them
 	moveUpDx    int
 	moveUpDy    int
 	moveLeftDx  int
