@@ -284,8 +284,8 @@ func (b Board) isCheckmate() (bool, string, error) {
 	kingPieceIsP1, _ := kingPiece.isPlayer1()
 	fmt.Println("KingPiece is Player 1?", kingPieceIsP1)
 
-	// TODO: check if any other piece can get in the way of putting the king in check
-	// TODO: check if any other piece can kill the opponent's piece putting the king in check
+	// TODO: check if any other piece can get in the way of putting the king in check without causing another check
+	// TODO: check if any other piece can kill the opponent's piece putting the king in check without causing another check
 
 	// If no other piece can intervene, check if the king can move
 	for colDx := -1; colDx <= 1; colDx++ {
@@ -319,8 +319,8 @@ func (b Board) isCheckmate() (bool, string, error) {
 }
 
 func (b Board) isStalemate() (bool, error) {
-	// if king is not in check, but is the only piece left, he must be able to move somewhere
-	// without being put in check
+	// TODO: if king is not in check, but is the only piece left, he must be able to move somewhere
+	// 		without being put in check
 
 	return false, nil
 }
