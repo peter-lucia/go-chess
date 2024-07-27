@@ -76,6 +76,9 @@ func (p *Piece) Move(startRow int, startCol int, rowDy int, colDx int, board *Bo
 		return false, *board, nil
 	}
 
+	board.CheckMate, board.Winner, _ = board.isCheckmate()
+	board.IsPlayer1Turn = !board.IsPlayer1Turn
+
 	return true, *board, nil
 }
 

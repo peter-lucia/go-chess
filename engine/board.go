@@ -87,6 +87,13 @@ func (b Board) moveJumpsPiecesCorrectly(p Piece, startRow int, startCol int, row
 
 func (b Board) moveIsValidForPiece(p Piece, startRow int, startCol int, rowDy int, colDx int) (bool, error) {
 
+	if (startRow+rowDy < 0) || (startRow+rowDy > 7) {
+		return false, nil
+	}
+	if (startCol+colDx < 0) || (startCol+colDx > 7) {
+		return false, nil
+	}
+
 	isP1, _ := p.isPlayer1()
 	switch p.CellType {
 	case P1Queen, P2Queen:
@@ -264,10 +271,15 @@ func (b Board) isCheckmate() (bool, string, error) {
 	fmt.Println("P2KingRow", p2KingRow, "P2KingCol", p2KingCol)
 
 	kingPiece := b.State[p1KingRow][p1KingCol]
-	winner := "Player 2"
+	possibleWinner := "Player 2"
+
+	kingRow := p1KingRow
+	kingCol := p1KingCol
 	if p2KingInCheck {
 		kingPiece = b.State[p2KingRow][p2KingCol]
-		winner = "Player 1"
+		possibleWinner = "Player 1"
+		kingRow = p2KingRow
+		kingCol = p2KingCol
 	}
 	kingPieceIsP1, _ := kingPiece.isPlayer1()
 	fmt.Println("KingPiece is Player 1?", kingPieceIsP1)
@@ -276,19 +288,33 @@ func (b Board) isCheckmate() (bool, string, error) {
 	// TODO: check if any other piece can kill the opponent's piece putting the king in check
 
 	// If no other piece can intervene, check if the king can move
-	for dx := -1; dx <= 1; dx++ {
-		for dy := -1; dy <= 1; dy++ {
+	for colDx := -1; colDx <= 1; colDx++ {
+		for rowDy := -1; rowDy <= 1; rowDy++ {
+			if colDx == 0 && rowDy == 0 {
+				continue
+			}
 			bTemp, _ := b.createCopy()
-			kingCanMoveHere, _ := bTemp.movePutsMovingPlayersKingInCheck(kingPiece, p1KingRow, p1KingCol, dy, dx)
-			if kingCanMoveHere {
+
+			moveValidForPiece, _ := bTemp.moveIsValidForPiece(kingPiece, kingRow, kingCol, rowDy, colDx)
+			if !moveValidForPiece {
+				continue
+			}
+
+			moveToValidPosition, _ := bTemp.moveReachesEmptyCellOrOpponent(kingPiece, kingRow, kingCol, rowDy, colDx)
+			if !moveToValidPosition {
+				continue
+			}
+			putsKingInCheck, _ := bTemp.movePutsMovingPlayersKingInCheck(kingPiece, kingRow, kingCol, rowDy, colDx)
+			if !putsKingInCheck {
 				return false, "none", nil
+
 			}
 
 		}
 	}
 
 	// checkmate
-	return true, winner, nil
+	return true, possibleWinner, nil
 
 }
 
@@ -305,9 +331,9 @@ func (b Board) movePutsMovingPlayersKingInCheck(p Piece, startRow int, startCol 
 	*/
 
 	isP1, _ := p.isPlayer1()
-	tempB := b
+	tempB, _ := b.createCopy()
 	tempB.State[startRow][startCol] = Piece{CellType: Empty}
-	tempB.State[startRow+rowDy][startCol+colDx] = p
+	tempB.State[startRow+rowDy][startCol+colDx] = Piece{CellType: p.CellType}
 	p1InCheck, p2InCheck, _ := tempB.isEitherKingInCheck()
 
 	if p1InCheck && isP1 {

@@ -293,7 +293,6 @@ func handleMove(mr ui.RequestMove) (bool, ui.BoardPosition, error) {
 		return false, uiBoardPosition, nil
 	}
 
-	engineNewBoardPosition.IsPlayer1Turn = !engineNewBoardPosition.IsPlayer1Turn
 	gameLookup[engineNewBoardPosition.Uuid.String()] = &engineNewBoardPosition
 	uiNewBoardPosition, _ := translateToUIBoardPosition(engineNewBoardPosition)
 
