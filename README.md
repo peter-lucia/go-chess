@@ -2,7 +2,7 @@
 
 A chess engine written in go with a frontend written in js.
 
-![Go Play Chess](images/go_chess.png)
+![Go Play Chess](images/go_chess_2.png)
 
 
 ### Getting Started
