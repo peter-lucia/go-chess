@@ -3,16 +3,7 @@ package engine
 import "fmt"
 
 type Piece struct {
-	// TODO: Use these, convert to vectors for non-jumping pieces, or get rid of them
-	moveUpDx    int
-	moveUpDy    int
-	moveLeftDx  int
-	moveLeftDy  int
-	moveDownDx  int
-	moveDownDy  int
-	moveRightDx int
-	moveRightDy int
-	CellType    Cell
+	CellType Cell
 }
 
 func (p Piece) validMove(startRow int, startCol int, rowDy int, colDx int, board *Board) (bool, error) {

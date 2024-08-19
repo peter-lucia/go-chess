@@ -21,3 +21,11 @@ make compile-and-run
 
 Open a browser to [http://localhost:8080](http://localhost:8080) to play!
 
+### TODO
+
+- [ ] Convert Pawns To Selection
+- [ ] Robust Checkmate Detection
+- [ ] Stalemate detection
+- [ ] Save game state
+- [ ] Export game state
+- [ ] Settable move timers
