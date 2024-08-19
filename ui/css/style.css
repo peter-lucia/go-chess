@@ -1,27 +1,33 @@
-html {background-color: #232323}
+html {
+    background-color: #232323
+}
 
 #board1 {
+    min-height: 600px;
+    min-width: 600px;
+}
+
+#gameContainer {
     margin: 0 auto;
     width: 40%;
     margin-top: 25px;
+    justify-content: flex-end;
 }
 
-#IsPlayer1Turn {
-    border: none;
-    padding: 15px 32px;
-    font-family: Menlo, sans-serif;
-    font-size: 16px;
-    margin-left: 130px;
-    color: white;
-}
 
+#titleContainer {
+    margin-bottom: 10px;
+    min-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 #title1 {
-    margin-left: 45%;
-    margin-top: 25px;
     font-size: 24px;
     font-family: Menlo, sans-serif;
     color: white;
+    flex: 0 0 120px 60px;
 }
 
 /* General button styles */
@@ -46,22 +52,40 @@ button:hover {
     transform: scale(1.05); /* Slightly increase size */
 }
 
+#buttonsContainer {
+    min-width: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Specific styles for each button */
 #startBtn {
     margin-top: 20px;
     background-color: #f0d9b5;
     color: #404040;
-    margin-left: 30%;
+    /*justify-content: flex-start;*/
+    flex: 0 0 80px 25px;
 }
 
 #flipBoardBtn {
     margin-top: 20px;
     background-color: #b58863;
     color: #404040;
-    margin-left: 180px;
+    /*justify-content: flex-end;*/
+    flex: 0 0 80px 25px;
 
 }
 
-#flipBoardBtn:hover {
+#IsPlayer1Turn {
+    border: none;
+    padding: 15px 32px;
+    font-family: Menlo, sans-serif;
+    font-size: 16px;
+    color: white;
+    flex: 0 0 80px 25px;
+}
+
+#flipBoardBtn:hover, #startBtn:hover {
     background-color: #0b7dda; /* Darker blue on hover */
 }
